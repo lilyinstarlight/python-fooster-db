@@ -6,14 +6,14 @@ Usage
 -----
 Below is usage for a user database that demonstrates all features of the module.
 
-`users.db`
+users.db:
 ```
 username|password|age|admin
 -----------------------
 olduser|password|`100|~False
 ```
 
-`users.py`
+users.py:
 ```
 import db
 
