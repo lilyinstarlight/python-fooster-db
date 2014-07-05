@@ -54,6 +54,8 @@ class Database(object):
 						values.append(value[1:] == 'True')
 					elif value[0] == '`':
 						values.append(int(value[1:]))
+					elif value[0] == '[' and value[-1] == ']':
+						values.append(value[1:-1].split(','))
 					else:
 						values.append(value)
 
@@ -76,6 +78,8 @@ class Database(object):
 						values.append('~' + str(value))
 					elif isinstance(value, int):
 						values.append('`' + str(value))
+					elif isinstance(value, list):
+						values.append('[' + ','.join(value) + ']')
 					else:
 						values.append(value)
 
