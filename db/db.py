@@ -3,10 +3,16 @@ import json
 name = 'db.py'
 version = '0.1'
 
+class HeadersError(Exception):
+	pass
+
+class HeadersMismatchError(Exception):
+	pass
+
 class Database(object):
-	def __init__(self, filename):
+	def __init__(self, filename, headers=None):
 		self.filename = filename
-		self.headers = []
+		self.headers = headers
 		self.entries = {}
 
 		class Entry(object):
@@ -22,7 +28,15 @@ class Database(object):
 
 		self.Entry = Entry
 
-		self.read()
+		#If database is found, read it
+		if os.path.isfile(self.filename):
+			self.read()
+		#Else write a new (empty) one
+		else:
+			if not self.headers:
+				raise HeadersError()
+
+			self.write()
 
 	def __iter__(self):
 		return iter(self.entries.values())
@@ -41,7 +55,13 @@ class Database(object):
 	def read(self):
 		with open(self.filename, 'r') as db:
 			#Get header list while removing the newline
-			self.headers = db.readline()[:-1].split('|')
+			headers = db.readline()[:-1].split('|')
+			#Check headers to be sure this is the database we want or set them if not set already
+			if self.headers:
+				if headers != self.headers:
+					raise HeadersMismatchError()
+			else:
+				self.headers = headers
 			#Skip divider line
 			db.readline()
 			#Clear the entry dictionary and load it
