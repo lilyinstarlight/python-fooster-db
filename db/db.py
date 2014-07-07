@@ -1,4 +1,5 @@
 import json
+import os
 
 name = 'db.py'
 version = '0.1'
@@ -29,12 +30,14 @@ class Database(object):
 		self.Entry = Entry
 
 		#If database is found, read it
-		if os.path.isfile(self.filename):
+		if os.path.exists(self.filename):
 			self.read()
 		#Else write a new (empty) one
 		else:
 			if not self.headers:
 				raise HeadersError()
+
+			os.makedirs(os.path.dirname(self.filename), exist_ok=True)
 
 			self.write()
 
