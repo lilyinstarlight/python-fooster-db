@@ -11,7 +11,7 @@ class HeadersMismatchError(Exception):
 	pass
 
 class Database(object):
-	def __init__(self, filename, headers=None):
+	def __init__(self, filename, headers=None, mkdir=True):
 		self.filename = filename
 		self.headers = headers
 		self.entries = {}
@@ -37,7 +37,8 @@ class Database(object):
 			if not self.headers:
 				raise HeadersError()
 
-			os.makedirs(os.path.dirname(self.filename), exist_ok=True)
+			if mkdir:
+				os.makedirs(os.path.dirname(self.filename), exist_ok=True)
 
 			self.write()
 
