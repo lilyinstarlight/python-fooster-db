@@ -1,3 +1,5 @@
+import json
+
 name = 'db.py'
 version = '0.1'
 
@@ -45,21 +47,8 @@ class Database(object):
 			#Clear the entry dictionary and load it
 			self.entries.clear()
 			for line in db:
-				#Remove the newline before splitting
-				line_values = line[:-1].split('|')
-				values = []
-
-				for value in line_values:
-					if value[0] == '~':
-						values.append(value[1:] == 'True')
-					elif value[0] == '`':
-						values.append(int(value[1:]))
-					elif value[0] == '[' and value[-1] == ']':
-						values.append(value[1:-1].split(','))
-					else:
-						values.append(value)
-
-				self._add(*values)
+				#Magic for removing newline, splitting line by '|', using json to parse each entry, and add it to self
+				self._add(*(json.loads(value) for value in line[:-1].split('|')))
 
 	def write(self):
 		with open(self.filename, 'w') as db:
@@ -70,20 +59,8 @@ class Database(object):
 			db.write('-' * len(headers) + '\n')
 			#Write entry dictionary
 			for entry in self:
-				values = []
-
-				for header in self.headers:
-					value = entry.__dict__[header]
-					if isinstance(value, bool):
-						values.append('~' + str(value))
-					elif isinstance(value, int):
-						values.append('`' + str(value))
-					elif isinstance(value, list):
-						values.append('[' + ','.join(value) + ']')
-					else:
-						values.append(value)
-
-				db.write('|'.join(values) + '\n')
+				#Magic for going through each header in this entry, getting the entry's value for the header, using json to dump it to a string, and joining by '|'
+				db.write('|'.join((json.dumps(entry.__dict__[header]) for header in self.headers)) + '\n')
 
 	def get(self, key, default=None):
 		return self.entries.get(key, default)

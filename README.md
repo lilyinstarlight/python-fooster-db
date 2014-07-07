@@ -10,7 +10,7 @@ users.db:
 ```
 username|password|age|admin|friends
 -----------------------------------
-olduser|password|`100|~False|[]
+"olduser"|"password"|100|false|[]
 ```
 
 users.py:
@@ -19,7 +19,7 @@ import db
 
 users = db.Database('users.db')
 
-users.add('testuser', 'supersecretpassword', 0, False, [ 'olduser' ])
+users.add('testuser', 'supersecretpassword', None, False, [ 'olduser' ])
 users.add('xkcd', 'correcthorsebatterystaple', 9, False, [ 'alice', 'bob' ])
 users.add('admin', 'admin', 30, True, [ 'xkcd' ])
 
