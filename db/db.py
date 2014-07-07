@@ -38,7 +38,9 @@ class Database(object):
 				raise HeadersError()
 
 			if mkdir:
-				os.makedirs(os.path.dirname(self.filename), exist_ok=True)
+				dirname = os.path.dirname(self.filename)
+				if dirname:
+					os.makedirs(os.path.dirname(self.filename), exist_ok=True)
 
 			self.write()
 
