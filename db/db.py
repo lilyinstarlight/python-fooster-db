@@ -10,24 +10,27 @@ class HeadersError(Exception):
 class HeadersMismatchError(Exception):
 	pass
 
+class Entry(object):
+	db = None
+
+	def __setattr__(self, key, value):
+		object.__setattr__(self, key, value)
+		if key in self.db.headers:
+			self.db.write()
+
+	def __delattr__(self, key):
+		raise AttributeError()
+
 class Database(object):
 	def __init__(self, filename, headers=None, mkdir=True):
 		self.filename = filename
 		self.headers = headers
 		self.entries = {}
 
-		class Entry(object):
+		class GenEntry(Entry):
 			db = self
 
-			def __setattr__(self, key, value):
-				object.__setattr__(self, key, value)
-				if key in self.db.headers:
-					self.db.write()
-
-			def __delattr__(self, key):
-				raise AttributeError()
-
-		self.Entry = Entry
+		self.Entry = GenEntry
 
 		#If database is found, read it
 		if os.path.exists(self.filename):
