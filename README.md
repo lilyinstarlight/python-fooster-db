@@ -6,7 +6,7 @@ Usage
 -----
 Below is an example for a user database that demonstrates all features of the module.
 
-```
+```python
 import db
 
 users = db.Database('users.db', [ 'username', 'password', 'age', 'admin', 'friends' ])
