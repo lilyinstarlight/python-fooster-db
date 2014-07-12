@@ -58,6 +58,8 @@ class Database(object):
 		entry.__dict__ = dict(zip(self.headers, values))
 		self.entries[values[0]] = entry
 
+		return entry
+
 	def _remove(self, key):
 		del self.entries[key]
 
@@ -95,8 +97,10 @@ class Database(object):
 		return self.entries.get(key, default)
 
 	def add(self, *values):
-		self._add(*values)
+		entry = self._add(*values)
 		self.write()
+
+		return entry
 
 	def remove(self, key):
 		self._remove(key)
