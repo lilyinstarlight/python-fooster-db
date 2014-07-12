@@ -13,16 +13,18 @@ users = db.Database('users.db', [ 'username', 'password', 'age', 'admin', 'frien
 
 users.add('testuser', 'supersecretpassword', None, False, [ 'olduser' ])
 users.add('xkcd', 'correcthorsebatterystaple', 9, False, [ 'alice', 'bob' ])
-users.add('admin', 'admin', 30, True, [ 'xkcd' ])
+admin_user = users.add('admin', 'admin', 30, True, [])
 
 with open('users.db', 'r') as file:
 	print(file.read())
 
 print(str(len(users)) + '\n')
 
-user = users.get('xkcd')
-user.admin = True
-print(user.username + ' (' + str(user.age) + ') - ' + ', '.join(user.friends) + '\n')
+xkcd_user = users.get('xkcd')
+xkcd_user.admin = True
+print(xkcd_user.username + ' (' + str(xkcd_user.age) + ') - ' + ', '.join(xkcd_user.friends) + '\n')
+
+admin_user.friends.append(xkcd_user.username)
 
 with open('users.db', 'r') as file:
 	print(file.read())
