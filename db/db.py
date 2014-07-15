@@ -14,7 +14,12 @@ class Entry(object):
 	db = None
 
 	def __setattr__(self, key, value):
+		#Don't let database index attribute be changed, instead remove and create a new entry
+		if key == self.db.headers[0]:
+			raise AttributeError('index attribute is read-only')
+
 		object.__setattr__(self, key, value)
+
 		if key in self.db.headers:
 			self.db.write()
 
