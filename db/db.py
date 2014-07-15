@@ -2,7 +2,7 @@ import json
 import os
 
 name = 'db.py'
-version = '0.1'
+version = '0.2'
 
 class HeadersError(Exception):
 	pass
