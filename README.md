@@ -15,28 +15,20 @@ users.add('testuser', 'supersecretpassword', None, False, [ 'olduser' ])
 users.add('xkcd', 'correcthorsebatterystaple', 9, False, [ 'alice', 'bob' ])
 admin_user = users.add('admin', 'admin', 30, True, [])
 
-with open('users.db', 'r') as file:
-	print(file.read())
-
-print(str(len(users)) + '\n')
+print('Length: ' + str(len(users)) + '\n')
 
 xkcd_user = users.get('xkcd')
 xkcd_user.admin = True
-print(xkcd_user.username + ' (' + str(xkcd_user.age) + ') - ' + ', '.join(xkcd_user.friends) + '\n')
+print('User: ' + xkcd_user.username + ' (' + str(xkcd_user.age) + ') - ' + ', '.join(xkcd_user.friends) + '\n')
 
 admin_user.friends.append(xkcd_user.username)
 
-with open('users.db', 'r') as file:
-	print(file.read())
-
 users.remove('testuser')
-
-with open('users.db', 'r') as file:
-	print(file.read())
 
 for user in users:
 	user.admin = False
 
+print('Database:\n')
 with open('users.db', 'r') as file:
 	print(file.read())
 ```
