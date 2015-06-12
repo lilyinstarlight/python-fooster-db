@@ -9,10 +9,10 @@ Below is an example for a user database that demonstrates all features of the mo
 ```python
 import db
 
-users = db.Database('users.db', [ 'username', 'password', 'age', 'admin', 'friends' ])
+users = db.Database('users.db', ['username', 'password', 'age', 'admin', 'friends'])
 
-users.add('testuser', 'supersecretpassword', None, False, [ 'olduser' ])
-users.add('xkcd', 'correcthorsebatterystaple', 9, False, [ 'alice', 'bob' ])
+users.add('testuser', 'supersecretpassword', None, False, ['olduser'])
+users.add('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
 admin_user = users.add('admin', 'admin', 30, True, [])
 
 print('Length: ' + str(len(users)) + '\n')
