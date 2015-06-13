@@ -101,6 +101,9 @@ class Database(object):
 	def get(self, key, default=None):
 		return self.entries.get(key, default)
 
+	def keys(self):
+		return self.entries.keys()
+
 	def add(self, *values):
 		entry = self._add(*values)
 		self.write()
