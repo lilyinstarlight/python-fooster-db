@@ -31,12 +31,6 @@ class Entry(object):
 		self.__dict__.update(kwargs)
 
 	def __getattr__(self, key):
-		#use object.__getattr__ to handle __dict__
-		if key == '__dict__':
-			object.__getattr__(self, key)
-
-			return
-
 		#only get known attributes
 		if key not in self.db.headers:
 			raise AttributeError('attribute not in entry')
@@ -48,12 +42,6 @@ class Entry(object):
 		return self.__dict__[key]
 
 	def __setattr__(self, key, value):
-		#use object.__setattr__ to handle __dict__
-		if key == '__dict__':
-			object.__setattr__(self, key, value)
-
-			return
-
 		#only set known attributes
 		if key not in self.db.headers:
 			raise AttributeError('attribute not in entry')
@@ -123,13 +111,17 @@ class Database(object):
 		if not isinstance(value, self.Entry):
 			#if numbers were used as placeholders, replace those with actual headers
 			if 0 in value.__dict__:
+				#if index value is skipped
 				if len(value.__dict__) < len(self.headers):
-					value.__dict__ = {self.headers[index + 1]: value for index, value in value.__dict__.items()}
+					values = {self.headers[index + 1]: value for index, value in value.__dict__.items()}
 				else:
-					value.__dict__ = {self.headers[index]: value for index, value in value.__dict__.items()}
+					values = {self.headers[index]: value for index, value in value.__dict__.items()}
+			#else, use existing dictionary
+			else:
+				values = value.__dict__
 
 			#make a proper entry
-			value = self.Entry(**value.__dict__)
+			value = self.Entry(**values)
 
 		#fix index header if it is either missing or is wrong
 		value.__dict__[self.headers[0]] = key
