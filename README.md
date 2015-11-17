@@ -11,22 +11,35 @@ import db
 
 users = db.Database('users.db', ['username', 'password', 'age', 'admin', 'friends'])
 
-users.add('testuser', 'supersecretpassword', None, False, ['olduser'])
-users.add('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
+users['testuser'] = users.Entry('supersecretpassword', None, False, ['olduser'])
+users['xkcd'] = db.Entry('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
 admin_user = users.add('admin', 'admin', 30, True, [])
 
 print('Length: ' + str(len(users)) + '\n')
 
-xkcd_user = users.get('xkcd')
+xkcd_user = users['xkcd']
 xkcd_user.admin = True
 print('User: ' + xkcd_user.username + ' (' + str(xkcd_user.age) + ') - ' + ', '.join(xkcd_user.friends) + '\n')
+
+test_user = users.get('testuser')
+for user in users:
+	print(user)
+test_user.admin = True
+print('User: ' + test_user.username + ' (' + str(test_user.age) + ') - ' + ', '.join(test_user.friends) + '\n')
 
 admin_user.friends.append(xkcd_user.username)
 
 users.remove('testuser')
 
+del users['admin']
+
 for user in users:
 	user.admin = False
+
+for username in users.keys():
+	print(username)
+
+print(users.values())
 
 print('Database:\n')
 with open('users.db', 'r') as file:
