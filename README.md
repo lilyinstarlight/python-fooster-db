@@ -39,6 +39,8 @@ for user in users:
 for username in users.keys():
 	print(username)
 
+print('xkcd' in users)
+
 print(users.values())
 
 print('Database:\n')

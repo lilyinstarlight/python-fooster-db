@@ -151,6 +151,9 @@ class Database(object):
 	def __iter__(self):
 		return iter(self.entries.values())
 
+	def __contains__(self, key):
+		return key in self.entries
+
 	def read(self):
 		#if there has been no update, do not read
 		mtime = os.path.getmtime(self.filename)
