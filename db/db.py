@@ -154,6 +154,9 @@ class Database(object):
 	def __contains__(self, key):
 		return key in self.entries
 
+	def __repr__(self):
+		return 'db.Database(' + repr(self.filename) + ', ' + repr(self.headers) + ')'
+
 	def read(self):
 		#if there has been no update, do not read
 		mtime = os.path.getmtime(self.filename)
