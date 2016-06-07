@@ -34,10 +34,10 @@ users.remove('testuser')
 del users['admin']
 
 for user in users:
-	user.admin = False
+    user.admin = False
 
 for username in users.keys():
-	print(username)
+    print(username)
 
 print('xkcd' in users)
 
@@ -45,5 +45,5 @@ print(users.values())
 
 print('Database:\n')
 with open('users.db', 'r') as file:
-	print(file.read())
+    print(file.read())
 ```

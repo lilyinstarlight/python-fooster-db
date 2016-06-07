@@ -5,17 +5,20 @@ import os
 name = 'db.py'
 version = '0.3'
 
+
 class HeadersError(Exception):
     pass
 
+
 class HeadersMismatchError(Exception):
     pass
+
 
 class Entry(object):
     db = None
 
     def __init__(self, *args, **kwargs):
-        if self.db != None:
+        if self.db is not None:
             # use embedded db to intelligently update __dict__ with database headers
             if len(args) + len(kwargs) < len(self.db.headers):
                 # missing first header
@@ -65,6 +68,7 @@ class Entry(object):
 
     def __repr__(self):
         return 'db.Entry(**' + repr(self.__dict__) + ')'
+
 
 class Database(object):
     def __init__(self, filename, headers=None, mkdir=True):
@@ -209,7 +213,7 @@ class Database(object):
 
         # safely write database and update mtime
         with open(self.filename, 'w') as db:
-            db.write(database.getvalue());
+            db.write(database.getvalue())
         self.mtime = os.path.getmtime(self.filename)
 
     def get(self, key, default=None):
