@@ -3,6 +3,7 @@ from distutils.core import setup
 
 from db import name, version
 
+
 setup(
     name=name,
     version=version,
