@@ -1,9 +1,60 @@
+import errno
 import io
 import json
 import os
+import time
+
 
 name = 'db.py'
 version = '0.3'
+
+
+# inspired from https://github.com/dmfrey/FileLock
+class Lock(object):
+    def __init__(self, filename):
+        self.filename = filename
+
+        self.lock = self.filename + '.lock'
+        self.lock_fd = -1
+        self.lock_delay = 0.05
+
+        self.locked = False
+
+    def acquire(self):
+        if self.locked:
+            return
+
+        while True:
+            try:
+                self.lock_fd = os.open(self.lock, os.O_CREAT|os.O_EXCL|os.O_RDWR)
+                break
+            except OSError as err:
+                if err.errno != errno.EEXIST:
+                    raise
+
+                time.sleep(self.lock_delay)
+
+        self.locked = True
+
+    def release(self):
+        if not self.locked:
+            return
+
+        os.close(self.lock_fd)
+        os.unlink(self.lock)
+
+        self.locked = False
+
+    def __enter__(self):
+        self.acquire()
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.release()
+
+    def __del__(self):
+        self.release()
 
 
 class HeadersError(Exception):
@@ -76,6 +127,8 @@ class Database(object):
         self.headers = headers
         self.mkdir = mkdir
 
+        self.lock = Lock(self.filename)
+
         self.entries = {}
 
         self.mtime = 0
@@ -103,6 +156,8 @@ class Database(object):
             self.write()
 
     def __len__(self):
+        self.read()
+
         return len(self.entries)
 
     def __getitem__(self, key):
@@ -148,14 +203,20 @@ class Database(object):
         self.write()
 
     def __delitem__(self, key):
+        self.read()
+
         del self.entries[key]
 
         self.write()
 
     def __iter__(self):
+        self.read()
+
         return iter(self.entries.values())
 
     def __contains__(self, key):
+        self.read()
+
         return key in self.entries
 
     def __repr__(self):
@@ -170,25 +231,26 @@ class Database(object):
         # new entries to read into
         entries = {}
 
-        with open(self.filename, 'r') as db:
-            # get header list while removing the newline
-            headers = db.readline()[:-1].split('|')
+        with self.lock:
+            with open(self.filename, 'r') as db:
+                # get header list while removing the newline
+                headers = db.readline()[:-1].split('|')
 
-            # check headers to be sure this is the database we want or set them if not set already
-            if self.headers:
-                if headers != self.headers:
-                    raise HeadersMismatchError()
-            else:
-                self.headers = headers
+                # check headers to be sure this is the database we want or set them if not set already
+                if self.headers:
+                    if headers != self.headers:
+                        raise HeadersMismatchError()
+                else:
+                    self.headers = headers
 
-            # skip divider line
-            db.readline()
+                # skip divider line
+                db.readline()
 
-            # read entries
-            for line in db:
-                # magic for removing newline, splitting line by '|', using json to parse each entry, and add it to self
-                values = [json.loads(value) for value in line[:-1].split('|')]
-                entries[values[0]] = self.Entry(**dict(zip(self.headers, values)))
+                # read entries
+                for line in db:
+                    # magic for removing newline, splitting line by '|', using json to parse each entry, and add it to self
+                    values = [json.loads(value) for value in line[:-1].split('|')]
+                    entries[values[0]] = self.Entry(**dict(zip(self.headers, values)))
 
         # safely update entries and mtime
         self.entries = entries
@@ -212,17 +274,24 @@ class Database(object):
             database.write(line + '\n')
 
         # safely write database and update mtime
-        with open(self.filename, 'w') as db:
-            db.write(database.getvalue())
-        self.mtime = os.path.getmtime(self.filename)
+        with self.lock:
+            with open(self.filename, 'w') as db:
+                db.write(database.getvalue())
+            self.mtime = os.path.getmtime(self.filename)
 
     def get(self, key, default=None):
+        self.read()
+
         return self.entries.get(key, default)
 
     def keys(self):
+        self.read()
+
         return self.entries.keys()
 
     def values(self):
+        self.read()
+
         return self.entries.values()
 
     def add(self, *args, **kwargs):
