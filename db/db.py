@@ -1,4 +1,3 @@
-import errno
 import io
 import json
 import os
@@ -28,10 +27,7 @@ class Lock(object):
             try:
                 self.lock_fd = os.open(self.lock, os.O_CREAT|os.O_EXCL|os.O_RDWR)
                 break
-            except OSError as err:
-                if err.errno != errno.EEXIST:
-                    raise
-
+            except FileExistsError:
                 time.sleep(self.lock_delay)
 
         self.locked = True
