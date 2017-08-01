@@ -25,7 +25,7 @@ class Lock(object):
 
         while True:
             try:
-                self.lock_fd = os.open(self.lock, os.O_CREAT|os.O_EXCL|os.O_RDWR)
+                self.lock_fd = os.open(self.lock, os.O_CREAT | os.O_EXCL | os.O_RDWR)
                 break
             except FileExistsError:
                 time.sleep(self.lock_delay)
