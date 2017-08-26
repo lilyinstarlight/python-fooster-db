@@ -5,7 +5,7 @@ import time
 
 
 name = 'db.py'
-version = '0.3'
+version = '0.4'
 
 
 # inspired from https://github.com/dmfrey/FileLock
@@ -123,6 +123,12 @@ class Database(object):
         self.headers = headers
         self.mkdir = mkdir
 
+        # make parent directories if necessary
+        if mkdir:
+            dirname = os.path.dirname(self.filename)
+            if dirname:
+                os.makedirs(dirname, exist_ok=True)
+
         self.lock = Lock(self.filename)
 
         self.entries = {}
@@ -134,21 +140,15 @@ class Database(object):
 
         self.Entry = GenEntry
 
-        # if database is found, read it
         if os.path.exists(self.filename):
+            # read existing database
             self.read()
-        # else, write an empty one
         else:
             # need headers if making empty database
             if not self.headers:
                 raise HeadersError()
 
-            # make parent directories if necessary
-            if mkdir:
-                dirname = os.path.dirname(self.filename)
-                if dirname:
-                    os.makedirs(dirname, exist_ok=True)
-
+            # write empty database
             self.write()
 
     def __len__(self):
@@ -264,7 +264,7 @@ class Database(object):
         database.write('-' * len(headers) + '\n')
 
         # write entries
-        for entry in self:
+        for entry in self.entries.values():
             # magic for going through each header in this entry, getting the entry's value for the header, using json to dump it to a string, and joining by '|'
             line = '|'.join(json.dumps(getattr(entry, header)) for header in self.headers)
             database.write(line + '\n')
