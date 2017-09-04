@@ -11,9 +11,13 @@ import db
 
 users = db.Database('users.db', ['username', 'password', 'age', 'admin', 'friends'])
 
+for user in users.values():
+    print(user)
+print()
+
 users['testuser'] = users.Entry('supersecretpassword', None, False, ['olduser'])
 users['xkcd'] = db.Entry('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
-admin_user = users.add('admin', 'admin', 30, True, [])
+admin_user = users.add('admin', 'admin|nimda', 30, True, [])
 
 print('Length: ' + str(len(users)) + '\n')
 
@@ -31,8 +35,6 @@ admin_user.friends.append(xkcd_user.username)
 
 users.remove('testuser')
 
-del users['admin']
-
 for user in users:
     user.admin = False
 
@@ -42,6 +44,9 @@ for username in users.keys():
 print('xkcd' in users)
 
 print(users.values())
+print()
+
+del users['admin']
 
 print('Database:\n')
 with open('users.db', 'r') as file:

@@ -1,11 +1,16 @@
 import io
 import json
+import re
 import os
 import time
 
 
 name = 'db.py'
 version = '0.4'
+
+
+# inspired from https://stackoverflow.com/a/2787979
+entry_separator = re.compile('''\|(?=(?:[^'"]|'[^']*'|"[^"]*")*$)''')
 
 
 # inspired from https://github.com/dmfrey/FileLock
@@ -230,7 +235,7 @@ class Database(object):
         with self.lock:
             with open(self.filename, 'r') as db:
                 # get header list while removing the newline
-                headers = db.readline()[:-1].split('|')
+                headers = [header.strip() for header in entry_separator.split(db.readline()[:-1])]
 
                 # check headers to be sure this is the database we want or set them if not set already
                 if self.headers:
@@ -245,7 +250,7 @@ class Database(object):
                 # read entries
                 for line in db:
                     # magic for removing newline, splitting line by '|', using json to parse each entry, and add it to self
-                    values = [json.loads(value) for value in line[:-1].split('|')]
+                    values = json.loads('[{}]'.format(','.join(value.strip() for value in entry_separator.split(line[:-1]))))
                     entries[values[0]] = self.Entry(**dict(zip(self.headers, values)))
 
         # safely update entries and mtime
@@ -256,17 +261,29 @@ class Database(object):
         # buffer for database output
         database = io.StringIO()
 
+        # magic for going through each header in this entry, getting the entry's value for the header, and using json to dump it to a string
+        rows = [[json.dumps(getattr(entry, header)) for header in self.headers] for entry in self.entries.values()]
+
+        # column sizes
+        cols = [len(header) for header in self.headers]
+
+        # find largest column size
+        for row in rows:
+            for idx, value in enumerate(row):
+                size = len(value)
+                if size > cols[idx]:
+                    cols[idx] = size
+
         # write header list
-        headers = '|'.join(self.headers)
+        headers = ' | '.join(header.ljust(cols[idx]) for idx, header in enumerate(self.headers))
         database.write(headers + '\n')
 
         # write divider line
-        database.write('-' * len(headers) + '\n')
+        database.write('-|-'.join('-'*col for col in cols) + '\n')
 
         # write entries
-        for entry in self.entries.values():
-            # magic for going through each header in this entry, getting the entry's value for the header, using json to dump it to a string, and joining by '|'
-            line = '|'.join(json.dumps(getattr(entry, header)) for header in self.headers)
+        for entry in rows:
+            line = ' | '.join(value.ljust(cols[idx]) for idx, value in enumerate(entry))
             database.write(line + '\n')
 
         # safely write database and update mtime
