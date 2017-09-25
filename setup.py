@@ -35,6 +35,7 @@ setup(
     name=name,
     version=version,
     description='a human-readable, magic database in Python',
+    url='https://github.com/fkmclane/python-fooster-db',
     license='MIT',
     author='Foster McLane',
     author_email='fkmclane@gmail.com',
