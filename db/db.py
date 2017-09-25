@@ -5,7 +5,7 @@ import os
 import time
 
 
-name = 'db.py'
+name = 'fooster-db'
 version = '0.4'
 
 

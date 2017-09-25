@@ -1,6 +1,6 @@
-db.py
-=====
-db.py is a human-readable, magic database implemented in Python. The database presents a dictionary of first column value to entry and each entry is represented by an object where each column is an attribute. If any attribute of object is changed, the database file is automatically updated to represent it. The database is formatted in a human-readable table and can store most built-in Python data structures. This project is not designed for large amounts of data or when speed is a top priority, but when you need, for example, an easy way to store text data or metadata.
+fooster-db
+==========
+fooster-db is a human-readable, magic database implemented in Python. The database presents a dictionary of first column value to entry and each entry is represented by an object where each column is an attribute. If any attribute of object is changed, the database file is automatically updated to represent it. The database is formatted in a human-readable table and can store most built-in Python data structures. This project is not designed for large amounts of data or when speed is a top priority, but when you need, for example, an easy way to store text data or metadata.
 
 Usage
 -----
