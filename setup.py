@@ -27,7 +27,7 @@ def find(haystack, *needles):
     return values
 
 
-with open(os.path.join(os.path.dirname(__file__), 'db', 'db.py'), 'r') as db:
+with open(os.path.join(os.path.dirname(__file__), 'fooster', 'db', 'db.py'), 'r') as db:
     name, version = find(db, 'name', 'version')
 
 
@@ -40,4 +40,5 @@ setup(
     author='Foster McLane',
     author_email='fkmclane@gmail.com',
     packages=find_packages(),
+    namespace_packages=['fooster'],
 )

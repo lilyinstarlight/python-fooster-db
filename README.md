@@ -7,16 +7,16 @@ Usage
 Below is an example for a user database that demonstrates all features of the module.
 
 ```python
-import db
+import fooster.db
 
-users = db.Database('users.db', ['username', 'password', 'age', 'admin', 'friends'])
+users = fooster.db.Database('users.db', ['username', 'password', 'age', 'admin', 'friends'])
 
 for user in users.values():
     print(user)
 print()
 
 users['testuser'] = users.Entry('supersecretpassword', None, False, ['olduser'])
-users['xkcd'] = db.Entry('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
+users['xkcd'] = fooster.db.Entry('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
 admin_user = users.add('admin', 'admin|nimda', 30, True, [])
 
 print('Length: ' + str(len(users)) + '\n')

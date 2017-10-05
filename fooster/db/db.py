@@ -6,7 +6,7 @@ import time
 
 
 name = 'fooster-db'
-version = '0.4.1'
+version = '0.4.2'
 
 
 # inspired from https://stackoverflow.com/a/2787979
