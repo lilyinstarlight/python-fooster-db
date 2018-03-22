@@ -6,14 +6,14 @@ import time
 
 
 name = 'fooster-db'
-version = '0.4.2'
+version = '0.6'
 
 
-# inspired from https://stackoverflow.com/a/2787979
+# inspired by https://stackoverflow.com/a/2787979
 entry_separator = re.compile('''\|(?=(?:[^'"]|'[^']*'|"[^"]*")*$)''')
 
 
-# inspired from https://github.com/dmfrey/FileLock
+# inspired by https://github.com/dmfrey/FileLock
 class Lock(object):
     def __init__(self, filename):
         self.filename = filename
@@ -275,15 +275,15 @@ class Database(object):
                     cols[idx] = size
 
         # write header list
-        headers = ' | '.join(header.ljust(cols[idx]) for idx, header in enumerate(self.headers))
+        headers = ' ' + ' | '.join(header.ljust(cols[idx]) for idx, header in enumerate(self.headers)) + ' '
         database.write(headers + '\n')
 
         # write divider line
-        database.write('-|-'.join('-'*col for col in cols) + '\n')
+        database.write('-' + '-+-'.join('-'*col for col in cols) + '-' + '\n')
 
         # write entries
         for entry in rows:
-            line = ' | '.join(value.ljust(cols[idx]) for idx, value in enumerate(entry))
+            line = ' ' + ' | '.join(value.ljust(cols[idx]) for idx, value in enumerate(entry)) + ' '
             database.write(line + '\n')
 
         # safely write database and update mtime
