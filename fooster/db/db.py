@@ -6,7 +6,7 @@ import time
 
 
 name = 'fooster-db'
-version = '0.6'
+version = '0.7'
 
 
 # inspired by https://stackoverflow.com/a/2787979
@@ -117,6 +117,13 @@ class Entry(object):
     def __delattr__(self, key):
         # don't allow deleting attributes
         raise AttributeError('attributes cannot be deleted')
+
+    def __iter__(self):
+        # read database to get possible changes
+        self.db.read()
+
+        # iterate over __dict__
+        return iter(self.__dict__.items())
 
     def __repr__(self):
         return 'db.Entry(**' + repr(self.__dict__) + ')'
