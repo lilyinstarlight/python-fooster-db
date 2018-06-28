@@ -6,7 +6,7 @@ import time
 
 
 name = 'fooster-db'
-version = '0.7'
+version = '0.8'
 
 
 # inspired by https://stackoverflow.com/a/2787979
@@ -107,6 +107,10 @@ class Entry(object):
 
         # read for potential database changes
         self.db.read()
+
+        # ignore same assignment to avoid write
+        if self.__dict__[key] == value:
+            return
 
         # assign it to the object's dictionary
         self.__dict__[key] = value
