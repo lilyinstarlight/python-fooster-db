@@ -19,17 +19,17 @@ users['testuser'] = users.Entry('supersecretpassword', None, False, ['olduser'])
 users['xkcd'] = fooster.db.Entry(username='xkcd', password='correcthorsebatterystaple', age=9, admin=False, friends=['alice', 'bob'])
 admin_user = users.add('admin', 'admin|nimda', 30, True, [])
 
-print('Length: ' + str(len(users)) + '\n')
+print('Length: {}\n'.format(len(users)))
 
 xkcd_user = users['xkcd']
 xkcd_user.admin = True
-print('User: ' + xkcd_user.username + ' (' + str(xkcd_user.age) + ') - ' + ', '.join(xkcd_user.friends) + '\n')
+print('User: {} ({}) - {}\n'.format(xkcd_user.username, xkcd_user.age, ', '.join(xkcd_user.friends)))
 
 test_user = users.get('testuser')
 for user in users:
 	print(user)
 test_user.admin = True
-print('User: ' + test_user.username + ' (' + str(test_user.age) + ') - ' + ', '.join(test_user.friends) + '\n')
+print('User: {} ({}) - {}\n'.format(test_user.username, test_user.age, ', '.join(test_user.friends)))
 
 admin_user.friends.append(xkcd_user.username)
 
