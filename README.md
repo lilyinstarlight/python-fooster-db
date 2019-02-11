@@ -16,7 +16,7 @@ for user in users.values():
 print()
 
 users['testuser'] = users.Entry('supersecretpassword', None, False, ['olduser'])
-users['xkcd'] = fooster.db.Entry('xkcd', 'correcthorsebatterystaple', 9, False, ['alice', 'bob'])
+users['xkcd'] = fooster.db.Entry(username='xkcd', password='correcthorsebatterystaple', age=9, admin=False, friends=['alice', 'bob'])
 admin_user = users.add('admin', 'admin|nimda', 30, True, [])
 
 print('Length: ' + str(len(users)) + '\n')

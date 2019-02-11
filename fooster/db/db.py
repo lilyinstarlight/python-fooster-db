@@ -130,7 +130,7 @@ class Entry(object):
         return iter(self.__dict__.items())
 
     def __repr__(self):
-        return 'db.Entry(**' + repr(self.__dict__) + ')'
+        return 'db.Entry({})'.format(', '.join('{}={}'.format(key, repr(value)) for key, value in self.__dict__.items()))
 
 
 class Database(object):
@@ -232,7 +232,7 @@ class Database(object):
         return key in self.entries
 
     def __repr__(self):
-        return 'db.Database(' + repr(self.filename) + ', ' + repr(self.headers) + ')'
+        return 'db.Database(filename={}, headers={})'.format(repr(self.filename), repr(self.headers))
 
     def read(self):
         # if there has been no update, do not read
