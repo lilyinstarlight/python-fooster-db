@@ -6,7 +6,7 @@ import time
 
 
 name = 'fooster-db'
-version = '0.8'
+version = '0.8.1'
 
 
 # inspired by https://stackoverflow.com/a/2787979
@@ -52,9 +52,6 @@ class Lock(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        self.release()
-
-    def __del__(self):
         self.release()
 
 
