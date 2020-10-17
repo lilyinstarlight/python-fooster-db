@@ -1,54 +1,67 @@
 fooster-db
 ==========
-fooster-db is a human-readable, magic database implemented in Python. The database presents a dictionary of first column value to entry and each entry is represented by an object where each column is an attribute. If any attribute of object is changed, the database file is automatically updated to represent it. The database is formatted in a human-readable table and can store most built-in Python data structures. This project is not designed for large amounts of data or when speed is a top priority, but when you need, for example, an easy way to store text data or metadata.
+
+fooster-db is a human-readable, magic database implemented in Python. The database presents a dictionary of first column value to entry and each entry is represented by an object where each column is an attribute. If any attribute of the entry is changed, the database file is automatically updated to represent it. The database is formatted in a human-readable table and can store JSON-serializable data structures. This project is not designed for large amounts of data or when speed is a priority, but when you need, for example, an easy way to store text data or metadata.
+
 
 Usage
 -----
+
 Below is an example for a user database that demonstrates all features of the module.
 
 ```python
 import fooster.db
 
-users = fooster.db.Database('users.db', ['username', 'password', 'age', 'admin', 'friends'])
+users = fooster.db.Database('users.db', ['username', 'password', 'favorite_number', 'admin', 'friends'])
 
-for user in users.values():
+print('Users:')
+for user in users:
     print(user)
 print()
 
-users['testuser'] = users.Entry('supersecretpassword', None, False, ['olduser'])
-users['xkcd'] = fooster.db.Entry(username='xkcd', password='correcthorsebatterystaple', age=9, admin=False, friends=['alice', 'bob'])
-admin_user = users.add('admin', 'admin|nimda', 30, True, [])
+users['test1'] = users.Entry(password='supersecretpassword', favorite_number=None, admin=False, friends=['olduser'])
+users['test2'] = fooster.db.Entry('test3', 'correcthorsebatterystaple', 7, False, ['alice', 'bob'])
+admin_user = users.add('admin', 'admin|nimda', 1337, True, [])
 
 print('Length: {}\n'.format(len(users)))
 
-xkcd_user = users['xkcd']
-xkcd_user.admin = True
-print('User: {} ({}) - {}\n'.format(xkcd_user.username, xkcd_user.age, ', '.join(xkcd_user.friends)))
+test1_user = users['test1']
+test1_user.favorite_number = 1
+print('User: {} ({}) - {}\n'.format(test1_user.username, test1_user.favorite_number, ', '.join(test1_user.friends)))
 
-test_user = users.get('testuser')
+test2_user = users.get('test2')
+test2_user.admin = True
+print('User: {} ({}) - {}\n'.format(test2_user.username, test2_user.favorite_number, ', '.join(test2_user.friends)))
+
+admin_user.friends.append(test2_user.username)
+
+print('Users:')
 for user in users:
-	print(user)
-test_user.admin = True
-print('User: {} ({}) - {}\n'.format(test_user.username, test_user.age, ', '.join(test_user.friends)))
+    print(user)
+print()
 
-admin_user.friends.append(xkcd_user.username)
-
-users.remove('testuser')
+del users['test1']
 
 for user in users:
     user.admin = False
 
+print('Usernames:')
 for username in users.keys():
     print(username)
-
-print(dict(users['xkcd']))
-
-print('xkcd' in users)
-
-print(users.values())
 print()
 
-del users['admin']
+print('User Dict: {}\n'.format(dict(users['test2'])))
+
+print('User Test: {}\n'.format('test2' in users))
+
+print('User Values: {}\n'.format(users.values()))
+
+users.remove('admin')
+
+print('Users:')
+for user in users.values():
+    print(user)
+print()
 
 print('Database:\n')
 with open('users.db', 'r') as file:
