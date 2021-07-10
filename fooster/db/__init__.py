@@ -5,10 +5,10 @@ import os
 import time
 
 
-__all__ = ['HeadersError', 'HeadersMismatchError', 'Database', 'Entry']
+__all__ = ['HeadersError', 'HeadersMismatchError', 'KeyExistsError', 'Database', 'Entry']
 
 
-__version__ = '0.9.0'
+__version__ = '0.10.0'
 
 
 # inspired by https://stackoverflow.com/a/2787979
@@ -67,6 +67,10 @@ class HeadersError(Exception):
 
 
 class HeadersMismatchError(Exception):
+    pass
+
+
+class KeyExistsError(KeyError):
     pass
 
 
@@ -323,7 +327,10 @@ class Database(object):
         else:
             raise HeadersMismatchError()
 
-        self[key] = self.Entry(*args, **kwargs)
+        with self.lock:
+            if key in self:
+                raise KeyExistsError(key)
+            self[key] = self.Entry(*args, **kwargs)
 
         return self[key]
 
