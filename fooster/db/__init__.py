@@ -24,10 +24,11 @@ class Lock(object):
         self.lock_fd = -1
         self.lock_delay = 0.05
 
-        self.locked = False
+        self.locked = 0
 
     def acquire(self):
         if self.locked:
+            self.locked += 1
             return
 
         while True:
@@ -37,10 +38,14 @@ class Lock(object):
             except FileExistsError:
                 time.sleep(self.lock_delay)
 
-        self.locked = True
+        self.locked = 1
 
     def release(self):
         if not self.locked:
+            return
+
+        if self.locked > 1:
+            self.locked -= 1
             return
 
         os.close(self.lock_fd)
